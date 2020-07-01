@@ -60,6 +60,10 @@ public class Order implements Serializable {
 	public Order(Instant moment, User client, OrderStatus orderStatus) {
 		this(null, moment, client, orderStatus);
 	}
+	
+	public Double getTotal() {
+		return items.stream().mapToDouble(order -> order.getSubTotal()).sum();
+	}
 
 	@Override
 	public int hashCode() {
