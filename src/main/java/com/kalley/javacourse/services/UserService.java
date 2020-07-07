@@ -3,10 +3,13 @@ package com.kalley.javacourse.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.kalley.javacourse.entities.User;
 import com.kalley.javacourse.repositories.UserRepository;
+import com.kalley.javacourse.services.exceptions.DatabaseException;
 import com.kalley.javacourse.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -28,7 +31,13 @@ public class UserService {
 	}
 	
 	public void delete(Long id) {
-		repository.deleteById(id);
+		try {
+			repository.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException(id);
+		} catch (DataIntegrityViolationException e) {
+			throw new DatabaseException(e.getMessage());
+		}
 	}
 	
 	public User update(Long id, User obj) {
