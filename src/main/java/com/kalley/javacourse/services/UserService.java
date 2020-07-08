@@ -2,6 +2,8 @@ package com.kalley.javacourse.services;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -41,9 +43,13 @@ public class UserService {
 	}
 	
 	public User update(Long id, User obj) {
-		User entity = repository.getOne(id);
-		udpateData(entity, obj);
-		return repository.save(entity);
+		try {
+			User entity = repository.getOne(id);
+			udpateData(entity, obj);
+			return repository.save(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 	}
 
 	private void udpateData(User entity, User obj) {
